@@ -1,8 +1,13 @@
 package com.vk.testing.final_project.base;
 
 import com.codeborne.selenide.Configuration;
+import com.codeborne.selenide.SelenideElement;
 import org.junit.jupiter.api.BeforeAll;
 
+import java.time.Duration;
+
+import static com.codeborne.selenide.Condition.visible;
+import static com.codeborne.selenide.Selenide.$x;
 import static com.codeborne.selenide.Selenide.open;
 
 public class BaseTest {
@@ -17,5 +22,13 @@ public class BaseTest {
 
     protected void openMainPage() {
         open("https://inf-ege.sdamgia.ru/");
+
+        try {
+            SelenideElement cookieButton = $x("//div[text()='OK']");
+            if (cookieButton.isDisplayed()) {
+                cookieButton.click();
+            }
+        } catch (Exception ignored) {
+        }
     }
 }
