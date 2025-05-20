@@ -27,10 +27,34 @@ public class MainPageTest extends BaseTest {
     }
 
     @Test
-    public void firstTest() throws Exception {
+    public void mainFirstTest() throws Exception {
         openMainPage();
 
-        ScreenshotUtil.compareWithBaseline("main-page", List.of());
+        ScreenshotUtil.compareWithBaseline("main-page", mainPage.ignoredElements);
+    }
+
+    @Test
+    public void catalogFirstTest() throws Exception {
+        openMainPage();
+        mainPage.goToCatalogPage();
+
+        ScreenshotUtil.compareWithBaseline("catalog-page", mainPage.ignoredElements);
+    }
+
+    @Test
+    public void teacherFirstTest() throws Exception {
+        openMainPage();
+        mainPage.goToTeacherPage();
+
+        ScreenshotUtil.compareWithBaseline("teacher-page", mainPage.ignoredElements);
+    }
+
+    @Test
+    public void guestBookFirstTest() throws Exception {
+        openMainPage();
+        mainPage.goToGuestBookPage();
+
+        ScreenshotUtil.compareWithBaseline("guestbook-page", mainPage.ignoredElements);
     }
 
     @Test
