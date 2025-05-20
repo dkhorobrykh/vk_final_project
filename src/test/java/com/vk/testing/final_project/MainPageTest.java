@@ -23,12 +23,31 @@ public class MainPageTest extends BaseTest {
 
     @BeforeEach
     public void setUp() {
+        openMainPage();
     }
 
     @Test
     public void firstTest() throws Exception {
         openMainPage();
 
-        ScreenshotUtil.compareWithBaseline(mainPage.getRoot(), "main-page", List.of());
+        ScreenshotUtil.compareWithBaseline("main-page", List.of());
+    }
+
+    @Test
+    public void testLightTheme() throws Exception {
+        mainPage.switchToLightTheme();
+        ScreenshotUtil.compareWithBaseline(
+                "main-light",
+                mainPage.ignoredElements
+        );
+    }
+
+    @Test
+    public void testDarkTheme() throws Exception {
+        mainPage.switchToDarkTheme();
+        ScreenshotUtil.compareWithBaseline(
+                "main-dark",
+                mainPage.ignoredElements
+        );
     }
 }
