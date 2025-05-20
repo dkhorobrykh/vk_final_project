@@ -2,6 +2,8 @@ package com.vk.testing.final_project.util;
 
 import com.codeborne.selenide.SelenideElement;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebElement;
 import ru.yandex.qatools.ashot.AShot;
 import ru.yandex.qatools.ashot.comparison.ImageDiffer;
 import ru.yandex.qatools.ashot.coordinates.WebDriverCoordsProvider;
@@ -19,17 +21,24 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 public class ScreenshotUtil {
     public static void compareWithBaseline(
-            SelenideElement target,
             String screenshotName,
             List<String> ignoredCssSelectors
     ) throws IOException {
 
-        var ashot = new AShot().coordsProvider(new WebDriverCoordsProvider());
-        for (var selector : ignoredCssSelectors) {
-            ashot.addIgnoredElement(By.cssSelector(selector));
+        for (String selector : ignoredCssSelectors) {
+            List<WebElement> elements = getWebDriver().findElements(By.cssSelector(selector));
+            for (WebElement el : elements) {
+                ((JavascriptExecutor) getWebDriver()).executeScript(
+                        "arguments[0].style.visibility='hidden'; arguments[0].style.display='none';", el
+                );
+            }
         }
 
-        var actual = ashot.shootingStrategy(ShootingStrategies.viewportPasting(100)).takeScreenshot(getWebDriver(), target);
+        var ashot = new AShot()
+                .coordsProvider(new WebDriverCoordsProvider())
+                .shootingStrategy(ShootingStrategies.viewportPasting(100));
+
+        var actual = ashot.takeScreenshot(getWebDriver());
         var actualImage = actual.getImage();
 
         var fallbackBaselineFile = new File("src/test/resources/baselines/" + screenshotName + ".png");

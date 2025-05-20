@@ -12,9 +12,10 @@ public class BaseTest {
         Configuration.headless = false;
         Configuration.browserSize = "1920x1080";
         Configuration.screenshots = false;
+        Configuration.pageLoadTimeout = 60000;
     }
 
     protected void openMainPage() {
-        open("https://vk.com");
+        open("https://inf-ege.sdamgia.ru/");
     }
 }
