@@ -57,10 +57,15 @@ public class MainPage implements BasePage {
     }
 
     public List<String> ignoredElements = List.of(
-            ".TopAdBanner",
-            ".footer",
-            "#clock",
-            ".Header-Logo",
-            "div.Sidebar"
+//            ".TopAdBanner",
+//            ".footer",
+            ".//*[contains(@id, 'yandex_')]",
+            ".//*[contains(@id, 'yandex_rtb')]",
+            ".//*[contains(@id, 'ya_partner')]",
+            ".//*[contains(@id, 'ya_rtb')]",
+            ".//center",
+            ".//*[contains(@class, 'Header-Logo')]",
+            ".//*[@data-container='outer']"
+//            "div.Sidebar"
     );
 }
