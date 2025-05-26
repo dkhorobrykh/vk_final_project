@@ -10,8 +10,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
-
 public class MainPageTest extends BaseTest {
     MainPage mainPage = new MainPage();
 
@@ -30,7 +28,7 @@ public class MainPageTest extends BaseTest {
     public void mainFirstTest() throws Exception {
         openMainPage();
 
-        ScreenshotUtil.compareWithBaseline("main-page", mainPage.ignoredElements);
+        ScreenshotUtil.compareWithBaseline("main-page", mainPage.getIgnoredElements(), mainPage.getPromoWidgets());
     }
 
     @Test
@@ -38,7 +36,7 @@ public class MainPageTest extends BaseTest {
         openMainPage();
         mainPage.goToCatalogPage();
 
-        ScreenshotUtil.compareWithBaseline("catalog-page", mainPage.ignoredElements);
+        ScreenshotUtil.compareWithBaseline("catalog-page", mainPage.getIgnoredElements(), mainPage.getPromoWidgets());
     }
 
     @Test
@@ -46,7 +44,7 @@ public class MainPageTest extends BaseTest {
         openMainPage();
         mainPage.goToTeacherPage();
 
-        ScreenshotUtil.compareWithBaseline("teacher-page", mainPage.ignoredElements);
+        ScreenshotUtil.compareWithBaseline("teacher-page", mainPage.getIgnoredElements(), mainPage.getPromoWidgets());
     }
 
     @Test
@@ -54,7 +52,7 @@ public class MainPageTest extends BaseTest {
         openMainPage();
         mainPage.goToGuestBookPage();
 
-        ScreenshotUtil.compareWithBaseline("guestbook-page", mainPage.ignoredElements);
+        ScreenshotUtil.compareWithBaseline("guestbook-page", mainPage.getIgnoredElements(), mainPage.getPromoWidgets());
     }
 
     @Test
@@ -62,7 +60,8 @@ public class MainPageTest extends BaseTest {
         mainPage.switchToLightTheme();
         ScreenshotUtil.compareWithBaseline(
                 "main-light",
-                mainPage.ignoredElements
+                mainPage.getIgnoredElements(),
+                mainPage.getPromoWidgets()
         );
     }
 
@@ -71,7 +70,8 @@ public class MainPageTest extends BaseTest {
         mainPage.switchToDarkTheme();
         ScreenshotUtil.compareWithBaseline(
                 "main-dark",
-                mainPage.ignoredElements
+                mainPage.getIgnoredElements(),
+                mainPage.getPromoWidgets()
         );
     }
 }
