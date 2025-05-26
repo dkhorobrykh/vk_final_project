@@ -1,10 +1,8 @@
 package com.vk.testing.final_project.util;
 
 import com.codeborne.selenide.SelenideElement;
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.Keys;
-import org.openqa.selenium.WebElement;
+import lombok.extern.slf4j.Slf4j;
+import org.openqa.selenium.*;
 import ru.yandex.qatools.ashot.AShot;
 import ru.yandex.qatools.ashot.comparison.ImageDiffer;
 import ru.yandex.qatools.ashot.coordinates.WebDriverCoordsProvider;
@@ -15,38 +13,31 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$x;
 import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 import static javax.imageio.ImageIO.read;
 import static javax.imageio.ImageIO.write;
 import static org.junit.jupiter.api.Assertions.fail;
 
+@Slf4j
 public class ScreenshotUtil {
     public static void compareWithBaseline(
             String screenshotName,
-            List<String> ignoredCssSelectors
+            List<By> ignoredCssSelectors,
+            List<By> promoWidgets
     ) throws IOException {
 
-        // TODO: придумать, как по другому прогружать всю страницу целиком
-        for (var i = 0; i < 10; i++) {
-            getWebDriver().findElement(By.cssSelector("body")).sendKeys(Keys.PAGE_DOWN);
-        }
+        loadPromoWidgets(promoWidgets);
 
-        for (var i = 0; i < 10; i++) {
-            getWebDriver().findElement(By.cssSelector("body")).sendKeys(Keys.PAGE_UP);
-        }
-
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException ignored) {}
-
-        SelenideElement bottomPromoCloseButton = $x("/html/body/*[contains(@class, 'csr-uniq')]/div/div/div");
-        if (bottomPromoCloseButton.isDisplayed()) {
-            bottomPromoCloseButton.click();
-        }
-
-        for (String selector : ignoredCssSelectors) {
-            List<WebElement> elements = getWebDriver().findElements(By.xpath(selector));
+        for (By selector : ignoredCssSelectors) {
+            List<WebElement> elements;
+            try {
+                elements = getWebDriver().findElements(selector);
+            } catch (InvalidSelectorException ex) {
+                log.warn("Элемент с селектором '{}' не найден, пропускаем его", selector);
+                continue;
+            }
             for (WebElement el : elements) {
                 ((JavascriptExecutor) getWebDriver()).executeScript(
                         "const el = arguments[0];" +
@@ -103,6 +94,31 @@ public class ScreenshotUtil {
             return java.util.Base64.getEncoder().encodeToString(bytes);
         } catch (IOException e) {
             throw new RuntimeException("Failed to read overlay image", e);
+        }
+    }
+
+    private static void loadPromoWidgets(List<By> promoWidgets) {
+        // TODO: придумать, как по другому прогружать всю страницу целиком
+        for (var i = 0; i < 20; i++) {
+            getWebDriver().findElement(By.cssSelector("body")).sendKeys(Keys.PAGE_DOWN);
+        }
+
+        for (var i = 0; i < 20; i++) {
+            getWebDriver().findElement(By.cssSelector("body")).sendKeys(Keys.PAGE_UP);
+        }
+
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException ignored) {}
+
+        try {
+            for (var widget : promoWidgets) {
+                var element = $(widget);
+                if (element.isDisplayed()) {
+                    element.click();
+                }
+            }
+        } catch (Exception ignored) {
         }
     }
 
