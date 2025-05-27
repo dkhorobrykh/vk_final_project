@@ -44,7 +44,7 @@ public class DemoPageTest {
     private void assertFailsOnChange(String whatChanged, String baselineName, Runnable action) throws IOException {
         action.run();
         try {
-            ScreenshotUtil.compareWithBaseline(baselineName, Collections.emptyList());
+            ScreenshotUtil.compareWithBaseline(baselineName, Collections.emptyList(), Collections.emptyList());
         } catch (AssertionError ae) {
             System.out.println("Ожидаемое отличие при: " + whatChanged + " — " + ae.getMessage());
             return;
@@ -54,7 +54,7 @@ public class DemoPageTest {
 
     @Test
     void createBaseline() throws IOException {
-        ScreenshotUtil.compareWithBaseline(BASELINE_NAME, Collections.emptyList());
+        ScreenshotUtil.compareWithBaseline(BASELINE_NAME, Collections.emptyList(), Collections.emptyList());
     }
 
     @Test
@@ -105,10 +105,10 @@ public class DemoPageTest {
     @Test
     void createDynamicBaselines() throws IOException {
         DemoPage.toggleClock();
-        ScreenshotUtil.compareWithBaseline("demo_clock", Collections.emptyList());
+        ScreenshotUtil.compareWithBaseline("demo_clock", Collections.emptyList(), Collections.emptyList());
 
         open(URL);
         DemoPage.toggleAnimate();
-        ScreenshotUtil.compareWithBaseline("demo_animated", Collections.emptyList());
+        ScreenshotUtil.compareWithBaseline("demo_animated", Collections.emptyList(), Collections.emptyList());
     }
 }
