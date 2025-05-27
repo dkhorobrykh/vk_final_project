@@ -5,6 +5,7 @@ import com.vk.testing.final_project.pages.DemoPage;
 import com.vk.testing.final_project.util.ScreenshotUtil;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -53,41 +54,48 @@ public class DemoPageTest {
     }
 
     @Test
+    @DisplayName("Создать эталонный скриншот")
     void createBaseline() throws IOException {
         ScreenshotUtil.compareWithBaseline(BASELINE_NAME, Collections.emptyList(), Collections.emptyList());
     }
 
     @Test
+    @DisplayName("Ошибка при изменении цвета")
     void demonstrateColorChangeError() throws IOException {
         assertFailsOnChange("color change", BASELINE_NAME, DemoPage::toggleColor);
     }
 
     @Test
+    @DisplayName("Ошибка при изменении текста")
     void demonstrateTextChangeError() throws IOException {
         assertFailsOnChange("text change", BASELINE_NAME, DemoPage::toggleText);
     }
 
     @Test
+    @DisplayName("Ошибка при смещении блока")
     void demonstrateShiftError() throws IOException {
         assertFailsOnChange("block shift", BASELINE_NAME, DemoPage::toggleShift);
     }
 
     @Test
+    @DisplayName("Ошибка при изменении размера")
     void demonstrateResizeError() throws IOException {
         assertFailsOnChange("resize", BASELINE_NAME, DemoPage::toggleResize);
     }
 
     @Test
+    @DisplayName("Ошибка при изменении изображения")
     void demonstrateImageChangeError() throws IOException {
         assertFailsOnChange("image change", BASELINE_NAME, DemoPage::toggleImage);
     }
 
     @Test
+    @DisplayName("Ошибка при отображении рекламы")
     void demonstrateAdDisplayError() throws IOException {
         assertFailsOnChange("ad display", BASELINE_NAME, DemoPage::toggleAd);
     }
 
-    @ParameterizedTest
+    @ParameterizedTest(name = "{0} — проверка динамических элементов")
     @MethodSource("dynamicElements")
     void demonstrateDynamicError(String name, String baselineName, Runnable toggleAction, int delayMs) throws IOException, InterruptedException {
         toggleAction.run();
@@ -103,6 +111,7 @@ public class DemoPageTest {
     }
 
     @Test
+    @DisplayName("Создание эталонов для динамических элементов")
     void createDynamicBaselines() throws IOException {
         DemoPage.toggleClock();
         ScreenshotUtil.compareWithBaseline("demo_clock", Collections.emptyList(), Collections.emptyList());
