@@ -47,19 +47,7 @@ public class ScreenshotUtil {
                 for (WebElement el : elements) {
                     try {
                         ((JavascriptExecutor) getWebDriver()).executeScript(
-                                "const el = arguments[0];" +
-                                        "el.style.position = 'relative';" +
-                                        "const overlay = document.createElement('img');" +
-                                        "overlay.src = 'data:image/png;base64," + getOverlayBase64() + "';" +
-                                        "overlay.style.position = 'absolute';" +
-                                        "overlay.style.top = '0';" +
-                                        "overlay.style.left = '0';" +
-                                        "overlay.style.width = '100%';" +
-                                        "overlay.style.height = '100%';" +
-                                        "overlay.style.zIndex = 9999;" +
-                                        "overlay.style.pointerEvents = 'none';" +
-                                        "el.appendChild(overlay);",
-                                el
+                                "arguments[0].remove();", el
                         );
                     } catch (StaleElementReferenceException e) {
                         log.warn("Элемент устарел, пропускаем");

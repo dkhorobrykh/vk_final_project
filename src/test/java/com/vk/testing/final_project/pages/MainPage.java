@@ -19,6 +19,11 @@ public class MainPage implements BasePage {
     private static final By teacherButton = By.cssSelector("a[href='/teacher']");
     private static final By guestBookButton = By.cssSelector("a[href='/guestbook']");
     private final List<By> ignoredElements = List.of(
+            By.xpath(".//*[contains(@id, 'yandex_')]"),
+            By.xpath(".//*[contains(@id, 'yandex_rtb')]"),
+            By.xpath(".//*[contains(@id, 'ya_partner')]"),
+            By.xpath(".//*[contains(@id, 'ya_rtb')]"),
+            By.xpath(".//main/div"),
             By.xpath(".//main/div[1]"),
             By.xpath(".//main/div[2]/div[1]"),
             By.xpath(".//main/div[last()]"),
