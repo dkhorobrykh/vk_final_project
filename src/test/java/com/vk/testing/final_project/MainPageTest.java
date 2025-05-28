@@ -28,7 +28,7 @@ public class MainPageTest extends BaseTest {
     public void mainFirstTest() throws Exception {
         openMainPage();
 
-        ScreenshotUtil.compareWithBaseline("main-page", mainPage.getIgnoredElements(), mainPage.getPromoWidgets());
+        ScreenshotUtil.compareWithBaseline("main-page", mainPage.getIgnoredElements(), mainPage.getPopUpWidgets());
     }
 
     @Test
@@ -36,7 +36,7 @@ public class MainPageTest extends BaseTest {
         openMainPage();
         mainPage.goToCatalogPage();
 
-        ScreenshotUtil.compareWithBaseline("catalog-page", mainPage.getIgnoredElements(), mainPage.getPromoWidgets());
+        ScreenshotUtil.compareWithBaseline("catalog-page", mainPage.getIgnoredElements(), mainPage.getPopUpWidgets());
     }
 
     @Test
@@ -44,7 +44,7 @@ public class MainPageTest extends BaseTest {
         openMainPage();
         mainPage.goToTeacherPage();
 
-        ScreenshotUtil.compareWithBaseline("teacher-page", mainPage.getIgnoredElements(), mainPage.getPromoWidgets());
+        ScreenshotUtil.compareWithBaseline("teacher-page", mainPage.getIgnoredElements(), mainPage.getPopUpWidgets());
     }
 
     @Test
@@ -52,7 +52,7 @@ public class MainPageTest extends BaseTest {
         openMainPage();
         mainPage.goToGuestBookPage();
 
-        ScreenshotUtil.compareWithBaseline("guestbook-page", mainPage.getIgnoredElements(), mainPage.getPromoWidgets());
+        ScreenshotUtil.compareWithBaseline("guestbook-page", mainPage.getIgnoredElements(), mainPage.getPopUpWidgets());
     }
 
     @Test
@@ -61,7 +61,7 @@ public class MainPageTest extends BaseTest {
         ScreenshotUtil.compareWithBaseline(
                 "main-light",
                 mainPage.getIgnoredElements(),
-                mainPage.getPromoWidgets()
+                mainPage.getPopUpWidgets()
         );
     }
 
@@ -71,7 +71,7 @@ public class MainPageTest extends BaseTest {
         ScreenshotUtil.compareWithBaseline(
                 "main-dark",
                 mainPage.getIgnoredElements(),
-                mainPage.getPromoWidgets()
+                mainPage.getPopUpWidgets()
         );
     }
 }

@@ -8,6 +8,7 @@ import org.openqa.selenium.By;
 
 import java.util.List;
 
+import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.$;
 
 @Getter
@@ -18,13 +19,14 @@ public class MainPage implements BasePage {
     private static final By teacherButton = By.cssSelector("a[href='/teacher']");
     private static final By guestBookButton = By.cssSelector("a[href='/guestbook']");
     private final List<By> ignoredElements = List.of(
-            By.xpath(".//main/div[2]"),
+            By.xpath(".//*[contains(@id, 'yandex_')]"),
+            By.xpath(".//*[contains(@id, 'yandex_rtb')]"),
+            By.xpath(".//*[contains(@id, 'ya_partner')]"),
+            By.xpath(".//*[contains(@id, 'ya_rtb')]"),
+            By.xpath(".//main/div"),
+            By.xpath(".//main/div[1]"),
+            By.xpath(".//main/div[2]/div[1]"),
             By.xpath(".//main/div[last()]"),
-//            ".//*[contains(@id, 'yandex_')]",
-//            ".//*[contains(@id, 'yandex_rtb')]",
-//            ".//*[contains(@id, 'ya_partner')]",
-//            ".//*[contains(@id, 'ya_rtb')]",
-//            ".//center",
             By.xpath(".//*[contains(@class, 'Header-Logo')]"),
             By.xpath(".//div[@class='Sidebar']"),
             By.xpath(".//aside[contains(@class, 'Sidebar')]/div[last()]"),
@@ -32,9 +34,8 @@ public class MainPage implements BasePage {
             By.xpath(".//div[@class='sgia-main-content']/div[1]"),
             By.xpath(".//div[@class='left_column']/div[last()]"),
             By.xpath(".//div[@class='sgia-main-content']/ul[last()]/li[last()]/div[last() - 1]")
-//            ".//*[@data-container='outer']"
     );
-    private final List<By> promoWidgets = List.of(
+    private final List<By> popUpWidgets = List.of(
             By.xpath("/html/body/*[contains(@class, 'csr-uniq')]/div/div/div"),
             By.xpath("//div[text()='OK']")
     );
@@ -49,7 +50,7 @@ public class MainPage implements BasePage {
             if (isDarkThemeActive()) break;
             $(themeSwitcher).click();
         }
-        $(themeImage).shouldHave(Condition.attributeMatching("src", ".*new_dark\\.svg"));
+        $(themeImage).shouldHave(Condition.attributeMatching("src", ".*new_dark\\.svg").because("Тема не переключилась на темную"));
     }
 
     public void switchToLightTheme() {
@@ -57,26 +58,26 @@ public class MainPage implements BasePage {
             if (isLightThemeActive()) break;
             $(themeSwitcher).click();
         }
-        $(themeImage).shouldHave(Condition.attributeMatching("src", ".*new_light\\.svg"));
+        $(themeImage).shouldHave(Condition.attributeMatching("src", ".*new_light\\.svg").because("Тема не переключилась на светлую"));
     }
 
     public boolean isDarkThemeActive() {
-        return $(themeImage).getAttribute("src").contains("new_dark.svg");
+        return $(themeImage).shouldBe(visible.because("Элемент themeImage не найден")).getAttribute("src").contains("new_dark.svg");
     }
 
     public boolean isLightThemeActive() {
-        return $(themeImage).getAttribute("src").contains("new_light.svg");
+        return $(themeImage).shouldBe(visible.because("Элемент themeImage не найден")).getAttribute("src").contains("new_light.svg");
     }
 
     public void goToCatalogPage() {
-        $(catalogButton).shouldBe(Condition.visible).click();
+        $(catalogButton).shouldBe(visible.because("Элемент catalogButton не найден")).click();
     }
 
     public void goToTeacherPage() {
-        $(teacherButton).shouldBe(Condition.visible).click();
+        $(teacherButton).shouldBe(visible.because("Элемент teacherButton не найден")).click();
     }
 
     public void goToGuestBookPage() {
-        $(guestBookButton).shouldBe(Condition.visible).click();
+        $(guestBookButton).shouldBe(visible.because("Элемент guestBookButton не найден")).click();
     }
 }
