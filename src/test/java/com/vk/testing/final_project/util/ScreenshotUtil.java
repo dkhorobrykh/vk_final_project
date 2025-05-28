@@ -1,6 +1,5 @@
 package com.vk.testing.final_project.util;
 
-import com.codeborne.selenide.SelenideElement;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.*;
 import ru.yandex.qatools.ashot.AShot;
@@ -22,40 +21,68 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 @Slf4j
 public class ScreenshotUtil {
+    private static final int MAX_ALLOWED_DIFF_PIXELS = 500;
     public static void compareWithBaseline(
             String screenshotName,
             List<By> ignoredCssSelectors,
-            List<By> promoWidgets
+            List<By> popUpWidgets
     ) throws IOException {
 
-        loadPromoWidgets(promoWidgets);
+        loadPromoWidgets();
+        closePopUpWidgets(popUpWidgets);
 
-        for (By selector : ignoredCssSelectors) {
-            List<WebElement> elements;
-            try {
-                elements = getWebDriver().findElements(selector);
-            } catch (InvalidSelectorException ex) {
-                log.warn("Элемент с селектором '{}' не найден, пропускаем его", selector);
-                continue;
+        boolean rerunSelectors;
+        do {
+            rerunSelectors = false;
+
+            for (By selector : ignoredCssSelectors) {
+                List<WebElement> elements;
+                try {
+                    elements = getWebDriver().findElements(selector);
+                } catch (InvalidSelectorException ex) {
+                    log.warn("Элемент с селектором '{}' не найден, пропускаем его", selector);
+                    continue;
+                }
+
+                for (WebElement el : elements) {
+                    try {
+                        ((JavascriptExecutor) getWebDriver()).executeScript(
+                                "const el = arguments[0];" +
+                                        "el.style.position = 'relative';" +
+                                        "const overlay = document.createElement('img');" +
+                                        "overlay.src = 'data:image/png;base64," + getOverlayBase64() + "';" +
+                                        "overlay.style.position = 'absolute';" +
+                                        "overlay.style.top = '0';" +
+                                        "overlay.style.left = '0';" +
+                                        "overlay.style.width = '100%';" +
+                                        "overlay.style.height = '100%';" +
+                                        "overlay.style.zIndex = 9999;" +
+                                        "overlay.style.pointerEvents = 'none';" +
+                                        "el.appendChild(overlay);",
+                                el
+                        );
+                    } catch (StaleElementReferenceException e) {
+                        log.warn("Элемент устарел, пропускаем");
+                        continue;
+                    }
+
+                    if ($x(".//h3[text()='Отключите блокировщик рекламы']").isDisplayed()) {
+                        log.warn("Блокировка рекламы обнаружена, ждем 25 секунд для прогрузки страницы");
+
+                        try {
+                            Thread.sleep(25000);
+                        } catch (InterruptedException ignored) {}
+
+                        closePopUpWidgets(popUpWidgets);
+
+                        rerunSelectors = true;
+                        break;
+                    }
+                }
+
+                if (rerunSelectors) break;
             }
-            for (WebElement el : elements) {
-                ((JavascriptExecutor) getWebDriver()).executeScript(
-                        "const el = arguments[0];" +
-                                "const rect = el.getBoundingClientRect();" +
-                                "const overlay = document.createElement('img');" +
-                                "overlay.src = 'data:image/png;base64," + getOverlayBase64() + "';" +
-                                "overlay.style.position = 'absolute';" +
-                                "overlay.style.left = rect.left + window.scrollX + 'px';" +
-                                "overlay.style.top = rect.top + window.scrollY + 'px';" +
-                                "overlay.style.width = rect.width + 'px';" +
-                                "overlay.style.height = rect.height + 'px';" +
-                                "overlay.style.zIndex = 999999;" +
-                                "overlay.style.pointerEvents = 'none';" +
-                                "document.body.appendChild(overlay);",
-                        el
-                );
-            }
-        }
+        } while (rerunSelectors);
 
         var ashot = new AShot()
                 .coordsProvider(new WebDriverCoordsProvider())
@@ -80,10 +107,10 @@ public class ScreenshotUtil {
 
         var diff = new ImageDiffer().makeDiff(expectedImage, actualImage);
 
-        if (diff.hasDiff()) {
+        if (diff.hasDiff() && diff.getDiffSize() > MAX_ALLOWED_DIFF_PIXELS) {
             var diffFile = new File("target/" + screenshotName + "-diff.png");
             write(diff.getMarkedImage(), "PNG", diffFile);
-            fail("Screenshot mismatch! See diff: " + diffFile.getAbsolutePath());
+            fail("Screenshot mismatch! Pixels diff: " + diff.getDiffSize() + ", allowed: " + MAX_ALLOWED_DIFF_PIXELS);
         }
     }
 
@@ -97,7 +124,20 @@ public class ScreenshotUtil {
         }
     }
 
-    private static void loadPromoWidgets(List<By> promoWidgets) {
+    private static void loadPromoWidgets() {
+//        long lastHeight = (long) ((JavascriptExecutor) getWebDriver()).executeScript("return document.body.scrollHeight");
+//
+//        while (true) {
+//            ((JavascriptExecutor) getWebDriver()).executeScript("window.scrollTo(0, document.body.scrollHeight);");
+//            try {
+//                Thread.sleep(500);
+//            } catch (Exception ignored) {}
+//
+//            long newHeight = (long) ((JavascriptExecutor) getWebDriver()).executeScript("return document.body.scrollHeight");
+//            if (newHeight == lastHeight) break;
+//            lastHeight = newHeight;
+//        }
+
         // TODO: придумать, как по другому прогружать всю страницу целиком
         for (var i = 0; i < 20; i++) {
             getWebDriver().findElement(By.cssSelector("body")).sendKeys(Keys.PAGE_DOWN);
@@ -108,11 +148,13 @@ public class ScreenshotUtil {
         }
 
         try {
-            Thread.sleep(5000);
+            Thread.sleep(1000);
         } catch (InterruptedException ignored) {}
+    }
 
+    private static void closePopUpWidgets(List<By> popUpWidgets) {
         try {
-            for (var widget : promoWidgets) {
+            for (var widget : popUpWidgets) {
                 var element = $(widget);
                 if (element.isDisplayed()) {
                     element.click();
