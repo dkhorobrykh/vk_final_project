@@ -113,26 +113,17 @@ public class ScreenshotUtil {
     }
 
     private static void loadPromoWidgets() {
-//        long lastHeight = (long) ((JavascriptExecutor) getWebDriver()).executeScript("return document.body.scrollHeight");
-//
-//        while (true) {
-//            ((JavascriptExecutor) getWebDriver()).executeScript("window.scrollTo(0, document.body.scrollHeight);");
-//            try {
-//                Thread.sleep(500);
-//            } catch (Exception ignored) {}
-//
-//            long newHeight = (long) ((JavascriptExecutor) getWebDriver()).executeScript("return document.body.scrollHeight");
-//            if (newHeight == lastHeight) break;
-//            lastHeight = newHeight;
-//        }
+        long lastHeight = (long) ((JavascriptExecutor) getWebDriver()).executeScript("return document.body.scrollHeight");
 
-        // TODO: придумать, как по другому прогружать всю страницу целиком
-        for (var i = 0; i < 20; i++) {
-            getWebDriver().findElement(By.cssSelector("body")).sendKeys(Keys.PAGE_DOWN);
-        }
+        while (true) {
+            ((JavascriptExecutor) getWebDriver()).executeScript("window.scrollTo(0, document.body.scrollHeight);");
+            try {
+                Thread.sleep(500);
+            } catch (Exception ignored) {}
 
-        for (var i = 0; i < 20; i++) {
-            getWebDriver().findElement(By.cssSelector("body")).sendKeys(Keys.PAGE_UP);
+            long newHeight = (long) ((JavascriptExecutor) getWebDriver()).executeScript("return document.body.scrollHeight");
+            if (newHeight == lastHeight) break;
+            lastHeight = newHeight;
         }
 
         try {
@@ -151,5 +142,4 @@ public class ScreenshotUtil {
         } catch (Exception ignored) {
         }
     }
-
 }
