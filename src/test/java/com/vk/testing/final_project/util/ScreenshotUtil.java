@@ -22,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 @Slf4j
 public class ScreenshotUtil {
     private static final int MAX_ALLOWED_DIFF_PIXELS = 500;
+
     public static void compareWithBaseline(
             String screenshotName,
             List<By> ignoredCssSelectors,
@@ -59,7 +60,8 @@ public class ScreenshotUtil {
 
                         try {
                             Thread.sleep(25000);
-                        } catch (InterruptedException ignored) {}
+                        } catch (InterruptedException ignored) {
+                        }
 
                         closePopUpWidgets(popUpWidgets);
 
@@ -79,20 +81,16 @@ public class ScreenshotUtil {
         var actual = ashot.takeScreenshot(getWebDriver());
         var actualImage = actual.getImage();
 
-        var fallbackBaselineFile = new File("src/test/resources/baselines/" + screenshotName + ".png");
-        fallbackBaselineFile.getParentFile().mkdirs();
+        var baselineFile = new File("src/test/resources/baselines/" + screenshotName + ".png");
+        baselineFile.getParentFile().mkdirs();
 
-        BufferedImage expectedImage;
-
-        try (var stream = ScreenshotUtil.class.getResourceAsStream("/baselines/" + screenshotName + ".png")) {
-            if (stream == null) {
-                write(actualImage, "PNG", fallbackBaselineFile);
-                System.out.println("Baseline not found, saved current screenshot to: " + fallbackBaselineFile.getPath());
-                return;
-            }
-            expectedImage = read(stream);
+        if (!baselineFile.exists()) {
+            write(actualImage, "PNG", baselineFile);
+            System.out.println("Baseline not found, saved current screenshot to: " + baselineFile.getPath());
+            return;
         }
 
+        BufferedImage expectedImage = read(baselineFile);
         var diff = new ImageDiffer().makeDiff(expectedImage, actualImage);
 
         if (diff.hasDiff() && diff.getDiffSize() > MAX_ALLOWED_DIFF_PIXELS) {
@@ -119,7 +117,8 @@ public class ScreenshotUtil {
             ((JavascriptExecutor) getWebDriver()).executeScript("window.scrollTo(0, document.body.scrollHeight);");
             try {
                 Thread.sleep(500);
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+            }
 
             long newHeight = (long) ((JavascriptExecutor) getWebDriver()).executeScript("return document.body.scrollHeight");
             if (newHeight == lastHeight) break;
@@ -128,7 +127,8 @@ public class ScreenshotUtil {
 
         try {
             Thread.sleep(1000);
-        } catch (InterruptedException ignored) {}
+        } catch (InterruptedException ignored) {
+        }
     }
 
     private static void closePopUpWidgets(List<By> popUpWidgets) {
